@@ -4,10 +4,10 @@ import * as schema from "./schema";
 
 /**
  * KIYOTA ARCHITECTURE: RESILIENT DB INITIALIZATION
+ * Provides a valid URL format to satisfy the Neon constructor during build-time.
  */
-const connectionString = process.env.DATABASE_URL || "";
+const connectionString = process.env.DATABASE_URL || "postgres://localhost/placeholder";
 
-// Initialize Neon without throwing error at module level
-const client = neon(connectionString);
+const sql = neon(connectionString);
 
-export const db = drizzle(client, { schema });
+export const db = drizzle(sql, { schema });

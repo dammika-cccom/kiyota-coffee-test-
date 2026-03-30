@@ -11,6 +11,8 @@ interface ShopEditorProps {
   params: Promise<{ id: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function ShopMenuEditorPage({ params }: ShopEditorProps) {
   const { id } = await params;
 

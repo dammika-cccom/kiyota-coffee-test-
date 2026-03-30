@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import ProductEditor, { ProductData } from "../ProductEditor";
 import { AwardIcon } from "@/components/ui/icons";
 
+export const dynamic = "force-dynamic";
+
 // INSTITUTIONAL TYPE INFERENCE
 type LotRecord = typeof lots.$inferSelect;
 type RateRecord = typeof shippingRates.$inferSelect;

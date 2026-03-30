@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { MoveLeftIcon, CoffeeIcon } from "@/components/ui/icons";
 
+export const dynamic = "force-dynamic";
+
 export default async function StoryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   
