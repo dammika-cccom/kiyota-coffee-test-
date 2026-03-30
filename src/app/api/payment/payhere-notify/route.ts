@@ -2,16 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { orders } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import crypto from "node:crypto";
+
 export const runtime = 'edge';
+
 /**
  * INSTITUTIONAL IPN LISTENER
- * Purpose: Asynchronous Payment Confirmation from PayHere.
- * Zero-Any Standard | Zero-ESLint Error
+ * Cloudflare Edge Compatible
  */
 export async function POST(req: NextRequest) {
   try {
-    // 1. Extract Form Data (PayHere sends x-www-form-urlencoded)
+    const nodeCrypto = require('crypto');
     const formData = await req.formData();
     
     const merchantId = formData.get("merchant_id") as string;
@@ -24,48 +24,35 @@ export async function POST(req: NextRequest) {
     const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET;
 
     if (!merchantSecret) {
-      console.error("IPN Failure: Merchant Secret missing in env.");
       return new NextResponse("Configuration Error", { status: 500 });
     }
 
-    // 2. CRITICAL: Signature Verification
-    // IPN Formula: md5(merchant_id + order_id + payhere_amount + payhere_currency + status_code + md5(merchant_secret).toUpperCase())
-    const hashedSecret = crypto
+    const hashedSecret = nodeCrypto
       .createHash("md5")
       .update(merchantSecret)
       .digest("hex")
       .toUpperCase();
 
-    const localHash = crypto
+    const localHash = nodeCrypto
       .createHash("md5")
       .update(merchantId + orderId + payhereAmount + payhereCurrency + statusCode + hashedSecret)
       .digest("hex")
       .toUpperCase();
 
-    // 3. SECURE VALIDATION
     if (localHash !== md5sig) {
-      console.error(`Security Breach: Invalid MD5 Signature for Order ${orderId}`);
+      console.error(`Security Breach: Invalid Signature for Order ${orderId}`);
       return new NextResponse("Invalid Signature", { status: 401 });
     }
 
-    // 4. DATABASE SYNCHRONIZATION
-    // Status Code 2 means "Success" in PayHere Logic
     if (statusCode === "2") {
       await db.update(orders)
-        .set({ 
-          paymentStatus: "PAID", 
-          status: "PAID" // Automatically moves to the Fulfillment Pipeline
-        })
+        .set({ paymentStatus: "PAID", status: "PAID" })
         .where(eq(orders.id, orderId));
-      
-      console.log(`Institutional Sync: Order ${orderId} marked as PAID via IPN.`);
     }
 
-    // PayHere expects a 200 OK response to stop sending notifications
     return new NextResponse("OK", { status: 200 });
 
   } catch (error: unknown) {
-    // FIXED: Utilizing the 'error' variable for institutional logging
     console.error("Institutional IPN Route Failure:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }

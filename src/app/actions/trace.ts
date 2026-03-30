@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { lots, products, farms } from "@/db/schema";
 import { eq } from "drizzle-orm";
-export const runtime = 'edge';
+
 /**
  * INSTITUTIONAL TYPE INFERENCE
  * Ensures the trace result matches our schema exactly.

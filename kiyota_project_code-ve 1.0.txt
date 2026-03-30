@@ -1,4 +1,4 @@
-KIYOTA PROJECT EXPORT - DATE: 2026-03-30T11:36:04.708Z
+KIYOTA PROJECT EXPORT - DATE: 2026-03-29T15:14:35.214Z
 ====================================================
 
 --- START FILE: drizzle.config.ts ---
@@ -60,16 +60,16 @@ export default nextConfig;
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "pages:build": "npx @cloudflare/next-on-pages"
+    "lint": "next lint"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
-    "drizzle-orm": "^0.45.2",
+    "drizzle-orm": "^0.45.1",
     "jose": "^6.2.2",
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",
-    "next": "15.5.2",
+    "next": "^15.5.12",
+    "pg": "^8.20.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -77,12 +77,12 @@ export default nextConfig;
     "esbuild": "0.25.0"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.16",
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/pg": "^8.18.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
@@ -1264,8 +1264,6 @@ import {
   LayoutIcon, PackageIcon, ClipboardListIcon, UsersIcon, 
   BookOpenIcon, GlobeIcon, TrendingUpIcon, MoveLeftIcon, CoffeeIcon, ShieldCheckIcon
 } from "@/components/ui/icons";
-
-export const runtime = 'edge';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -4418,8 +4416,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-
-const randomString = crypto.randomUUID();
+import crypto from "crypto";
 
 export type UserRole = 
   | "SUPER_ADMIN" | "RETAIL_ADMIN" | "WHOLESALE_ADMIN" 
@@ -5541,8 +5538,6 @@ import {
   ShieldCheckIcon,
   TrendingUpIcon
 } from "@/components/ui/icons";
-
-export const runtime = 'edge';
 
 interface KiyotaSession {
   userId: string;
@@ -7571,8 +7566,6 @@ import {
   YoutubeIcon 
 } from "@/components/ui/icons";
 
-export const runtime = 'edge';
-
 export const metadata: Metadata = {
   title: "Kiyota Coffee | Premium Sri Lankan Specialty",
   description: "Japanese precision meeting Ceylon heritage. Farm-to-Cup Excellence.",
@@ -9519,7 +9512,6 @@ import {
   SearchIcon, AwardIcon, MapPinIcon, 
   TrendingUpIcon, CoffeeIcon, ShieldCheckIcon 
 } from "@/components/ui/icons";
-export const runtime = 'edge';
 
 export const dynamic = "force-dynamic";
 
@@ -10187,7 +10179,7 @@ import { db } from "@/db";
 import { orders } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "node:crypto";
-export const runtime = 'edge';
+
 /**
  * INSTITUTIONAL IPN LISTENER
  * Purpose: Asynchronous Payment Confirmation from PayHere.
@@ -10326,8 +10318,6 @@ body {
 import type { Metadata } from "next";
 import "./globals.css"; // The only place CSS is imported
 import { Providers } from "@/components/Providers";
-
-export const runtime = 'edge'; // <--- Add this line
 
 export const metadata: Metadata = {
   title: "Kiyota Coffee Roasters",
@@ -11470,22 +11460,27 @@ runFix();
 --- END FILE: src\db\fix-db.ts ---
 
 --- START FILE: src\db\index.ts ---
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import * as schema from "./schema";
+import * as dotenv from "dotenv";
+import path from "path";
 
-// We remove 'path', 'dotenv', and 'pg' because they are Node.js only.
-// Next.js handles environment variables automatically.
+// --- CRITICAL FIX FOR LOCAL SCRIPTS ---
+// This tells the script to look specifically for .env.local in your root folder
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("❌ DATABASE_URL is missing. Check your environment variables.");
+  throw new Error("❌ DATABASE_URL is missing. Check your .env.local file.");
 }
 
-// Create the Neon HTTP connection (this is Edge compatible)
-const sql = neon(process.env.DATABASE_URL);
+// Create a connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-// Export the Drizzle database object using the neon-http driver
-export const db = drizzle(sql, { schema });
+// Export the database object
+export const db = drizzle(pool, { schema });
 --- END FILE: src\db\index.ts ---
 
 --- START FILE: src\db\reset.ts ---

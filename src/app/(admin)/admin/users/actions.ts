@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import crypto from "crypto";
+
 
 export type UserRole = 
   | "SUPER_ADMIN" | "RETAIL_ADMIN" | "WHOLESALE_ADMIN" 
@@ -12,6 +12,14 @@ export type UserRole =
   | "BUYER" | "WHOLESALE_USER" | "STUDENT";
 
 export type ActionResponse = { success?: string; error?: string } | null;
+
+// Helper to generate random hex strings on the Edge
+const generateRandomHex = (bytes: number) => 
+  Array.from(crypto.getRandomValues(new Uint8Array(bytes)))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+
+
 
 /**
  * 1. B2B PARTNER APPROVAL
@@ -48,8 +56,8 @@ export async function adminAddUser(prevState: ActionResponse, formData: FormData
   const role = formData.get("role") as UserRole;
 
   try {
-    const tempPassword = crypto.randomBytes(6).toString('hex');
-    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const tempPassword = generateRandomHex(3); // replaces randomBytes(6)
+    const verificationToken = crypto.randomUUID();
 
     await db.insert(users).values({
       firstName,
@@ -118,7 +126,9 @@ export async function releaseEmail(userId: string) {
  */
 export async function resetUserPassword(userId: string) {
   try {
-    const tempPassword = crypto.randomBytes(4).toString('hex'); 
+    // Uses global crypto object
+    const tempPassword = generateRandomHex(4); 
+    
     await db.update(users)
       .set({ password: tempPassword, updatedAt: new Date() })
       .where(eq(users.id, userId));
