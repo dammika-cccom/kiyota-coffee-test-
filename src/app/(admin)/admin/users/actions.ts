@@ -5,7 +5,6 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-
 export type UserRole = 
   | "SUPER_ADMIN" | "RETAIL_ADMIN" | "WHOLESALE_ADMIN" 
   | "COFFEESHOP_ADMIN" | "FARM_ADMIN" | "ACADEMY_ADMIN" 
@@ -13,13 +12,15 @@ export type UserRole =
 
 export type ActionResponse = { success?: string; error?: string } | null;
 
-// Helper to generate random hex strings on the Edge
-const generateRandomHex = (bytes: number) => 
-  Array.from(crypto.getRandomValues(new Uint8Array(bytes)))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-
-
+/**
+ * INSTITUTIONAL RANDOM GENERATOR
+ * Uses global Web Crypto API (supported on Cloudflare Edge)
+ */
+const generateRandomHex = (bytes: number): string => {
+  const arr = new Uint8Array(bytes);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+};
 
 /**
  * 1. B2B PARTNER APPROVAL
@@ -30,19 +31,16 @@ export async function authorizeB2BPartner(userId: string, limit: string, terms: 
       role: "WHOLESALE_USER",
       b2bStatus: "ACTIVE",
       creditLimit: limit,
-      creditBalance: limit, // Initial available credit
+      creditBalance: limit,
       isApproved: true,
       requestingUpgrade: false,
       updatedAt: new Date()
     }).where(eq(users.id, userId));
 
-    // Audit log to satisfy ESLint for 'terms' variable
-    console.log(`Institutional Authorization: User ${userId} granted Net-${terms} terms.`);
-    
+    console.log(`Institutional Authorization: Net-${terms} granted.`);
     revalidatePath("/admin/users");
     return { success: "B2B Partnership Authorized successfully." };
   } catch (error: unknown) {
-    console.error("Institutional Authorization Failure:", error);
     return { error: "Failed to authorize partnership credentials." };
   }
 }
@@ -56,8 +54,8 @@ export async function adminAddUser(prevState: ActionResponse, formData: FormData
   const role = formData.get("role") as UserRole;
 
   try {
-    const tempPassword = generateRandomHex(3); // replaces randomBytes(6)
-    const verificationToken = crypto.randomUUID();
+    const tempPassword = generateRandomHex(3); 
+    const verificationToken = crypto.randomUUID(); // Global Web Crypto
 
     await db.insert(users).values({
       firstName,
@@ -72,7 +70,6 @@ export async function adminAddUser(prevState: ActionResponse, formData: FormData
     revalidatePath("/admin/users");
     return { success: `User Created. Temp Pass: ${tempPassword}` };
   } catch (err: unknown) {
-    console.error("User Creation Audit Failure:", err);
     return { error: "Identity conflict or database timeout." };
   }
 }
@@ -82,19 +79,16 @@ export async function adminAddUser(prevState: ActionResponse, formData: FormData
  */
 export async function toggleUserSuspension(userId: string, currentStatus: boolean) {
   try {
-    await db.update(users)
-      .set({ isSuspended: !currentStatus, updatedAt: new Date() })
-      .where(eq(users.id, userId));
+    await db.update(users).set({ isSuspended: !currentStatus, updatedAt: new Date() }).where(eq(users.id, userId));
     revalidatePath("/admin/users");
     return { success: "Account status synchronized." };
   } catch (error: unknown) {
-    console.error("Security Suspension Error:", error);
     return { error: "Status update failed." };
   }
 }
 
 /**
- * 4. ROLE UPDATES (GOVERNANCE)
+ * 4. ROLE UPDATES
  */
 export async function updateUserRole(userId: string, newRole: UserRole) {
   try {
@@ -102,7 +96,6 @@ export async function updateUserRole(userId: string, newRole: UserRole) {
     revalidatePath("/admin/users");
     return { success: "Role hierarchy updated." };
   } catch (error) {
-    console.error("Governance Role Update Error:", error);
     return { error: "Role update failed." };
   }
 }
@@ -114,29 +107,22 @@ export async function releaseEmail(userId: string) {
   try {
     await db.delete(users).where(eq(users.id, userId));
     revalidatePath("/admin/users");
-    return { success: "Member identity purged. Email released." };
+    return { success: "Member identity purged." };
   } catch (error: unknown) {
-    console.error("Institutional Purge Error:", error);
     return { error: "Failed to release email identity." };
   }
 }
 
 /**
- * 6. CREDENTIAL RESET (Resolved Build Error)
+ * 6. CREDENTIAL RESET
  */
 export async function resetUserPassword(userId: string) {
   try {
-    // Uses global crypto object
     const tempPassword = generateRandomHex(4); 
-    
-    await db.update(users)
-      .set({ password: tempPassword, updatedAt: new Date() })
-      .where(eq(users.id, userId));
-
+    await db.update(users).set({ password: tempPassword, updatedAt: new Date() }).where(eq(users.id, userId));
     revalidatePath("/admin/users");
     return { success: `Credentials Reset. Temp Pass: ${tempPassword}` };
   } catch (error: unknown) {
-    console.error("Security Reset Failure:", error);
     return { error: "Failed to reset password." };
   }
 }
