@@ -7,6 +7,8 @@ import {
   BookOpenIcon, GlobeIcon, TrendingUpIcon, MoveLeftIcon, CoffeeIcon, ShieldCheckIcon
 } from "@/components/ui/icons";
 
+export const runtime = 'edge';
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   const role = session?.role || "";

@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { orders } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "node:crypto";
-
+export const runtime = 'edge';
 /**
  * INSTITUTIONAL IPN LISTENER
  * Purpose: Asynchronous Payment Confirmation from PayHere.

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css"; // The only place CSS is imported
 import { Providers } from "@/components/Providers";
 
+export const runtime = 'edge'; // <--- Add this line
+
 export const metadata: Metadata = {
   title: "Kiyota Coffee Roasters",
   description: "Japanese precision meeting Ceylon heritage.",
