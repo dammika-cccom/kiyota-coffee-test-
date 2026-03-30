@@ -1,23 +1,14 @@
 import { type JWTPayload } from "jose";
-import { SignJWT } from "jose/jwt/sign";
-import { jwtVerify } from "jose/jwt/verify";
+import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-/**
- * INSTITUTIONAL SECURITY CONFIG
- * Bypasses Node.js streams to ensure 100% Cloudflare Edge compatibility.
- */
-const secretKey = process.env.SESSION_SECRET || "kiyota_secret_key_industrial_standard_32_chars";
+const secretKey = process.env.SESSION_SECRET || "kiyota_default_security_32_chars_long";
 const key = new TextEncoder().encode(secretKey);
 
-/**
- * SESSION DATA INTERFACE
- * Includes index signature to satisfy jose's JWTPayload requirements.
- */
 interface SessionData extends JWTPayload {
   userId: string;
   role: string;
-  [key: string]: unknown; // FIXED: Added index signature to resolve type mismatch
+  [key: string]: unknown;
 }
 
 export async function encrypt(payload: SessionData): Promise<string> {
@@ -30,13 +21,10 @@ export async function encrypt(payload: SessionData): Promise<string> {
 
 export async function decrypt(input: string): Promise<SessionData | null> {
   try {
-    const { payload } = await jwtVerify(input, key, {
-      algorithms: ["HS256"],
-    });
-    // FIXED: Explicit type casting to SessionData
+    const { payload } = await jwtVerify(input, key, { algorithms: ["HS256"] });
     return payload as SessionData;
   } catch (error) {
-    console.error("JWT Edge Decryption Failure:", error);
+    console.error("JWT Session Decryption Error", error);
     return null;
   }
 }
@@ -44,7 +32,6 @@ export async function decrypt(input: string): Promise<SessionData | null> {
 export async function createSession(userId: string, role: string) {
   const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000);
   const session = await encrypt({ userId, role });
-
   const cookieStore = await cookies();
   cookieStore.set("session", session, { 
     expires: expiresAt, 
