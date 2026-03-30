@@ -4,6 +4,8 @@ import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/session";
 import CheckoutForm from "./CheckoutForm";
 
+export const dynamic = 'force-dynamic';
+
 export type ShippingRate = typeof shippingRates.$inferSelect;
 export type BankAccount = typeof bankAccounts.$inferSelect;
 

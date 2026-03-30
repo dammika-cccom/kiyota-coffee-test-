@@ -11,6 +11,8 @@ import {
   YoutubeIcon 
 } from "@/components/ui/icons";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export const metadata: Metadata = {
   title: "Kiyota Coffee | Premium Sri Lankan Specialty",
