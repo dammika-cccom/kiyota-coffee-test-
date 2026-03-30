@@ -11,6 +11,7 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export const dynamic = "force-dynamic";
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { slug } = await params;
@@ -118,7 +119,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               <div className="flex flex-col gap-4">
                  <div className="flex justify-between items-end mb-4">
                     <p className="text-[10px] font-black uppercase text-stone-400">Retail Price</p>
-                    <p className="text-4xl font-serif italic text-[#D4AF37]">LKR {product.price}</p>
+                    <p className="text-4xl font-serif italic text-[#D4AF37]">LKR {product.priceLkr}</p>
                  </div>
                  <button className="w-full py-6 bg-[#2C1810] text-white text-[11px] font-black uppercase tracking-[0.4em] hover:bg-[#D4AF37] transition-all duration-500 shadow-2xl cursor-pointer">
                     Add to Shopping Bag
