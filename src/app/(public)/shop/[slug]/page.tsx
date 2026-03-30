@@ -23,9 +23,26 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const allProducts = await db.select({ slug: products.slug }).from(products).where(eq(products.isRetailEnabled, true));
-  return allProducts.map((p) => ({ slug: p.slug }));
+  // If the URL is missing or is the shadow placeholder, skip pre-rendering
+  if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("shadow_host")) {
+    console.log("Infrastructure: Skipping static generation for shop slugs (Build Phase)");
+    return [];
+  }
+
+  try {
+    const allProducts = await db.select({ slug: products.slug })
+      .from(products)
+      .where(eq(products.isRetailEnabled, true));
+    
+    return allProducts.map((p) => ({ slug: p.slug }));
+  } catch (error) {
+    console.error("Build-time Slug Fetch Error:", error);
+    return [];
+  }
 }
+
+// Ensure the page can still be generated on-demand at runtime
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
