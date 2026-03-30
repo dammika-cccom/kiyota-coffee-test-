@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/icons";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminMasterDashboard() {
   // 1. INSTITUTIONAL DATA AGGREGATION
   const [

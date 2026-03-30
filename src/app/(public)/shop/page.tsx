@@ -8,6 +8,8 @@ import { SensoryProduct } from "@/types/store";
 import Link from "next/link";
 import { GlobeIcon, MoveRightIcon } from "@/components/ui/icons";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Retail Roastery | Kiyota Coffee",
   description: "B2C Premium specialty roasts delivered from Matale.",

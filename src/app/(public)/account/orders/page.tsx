@@ -3,6 +3,9 @@ import { orders, users } from "@/db/schema";
 import { desc, eq } from "drizzle-orm"; // FIXED: 'eq' is now used
 import { PackageIcon } from "@/components/ui/icons";
 
+
+export const dynamic = "force-dynamic";
+
 export default async function UserOrdersPage() {
   // Logic: Fetch the first user for local testing (In prod, use session ID)
   const allUsers = await db.select().from(users).limit(1);

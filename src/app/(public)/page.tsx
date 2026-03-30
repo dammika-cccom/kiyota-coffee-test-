@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/icons";
 import TraceabilityPortal from "@/components/ui/TraceabilityPortal";
 
+export const dynamic = "force-dynamic";
+
 /**
  * INSTITUTIONAL HOMEPAGE ARCHITECTURE
  * Engineered for Zero-ESLint, Zero-Any, and High-Velocity B2C Conversion.

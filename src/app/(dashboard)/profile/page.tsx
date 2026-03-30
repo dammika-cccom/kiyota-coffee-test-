@@ -6,6 +6,8 @@ import { ShoppingBagIcon, BookOpenIcon, CoffeeIcon, AwardIcon, GlobeIcon, ClockI
 import Link from "next/link";
 import B2BUpgradeForm from "./B2BUpgradeForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function UserDashboard() {
   const auth = await getAuthUser();
   if (!auth) return null;
