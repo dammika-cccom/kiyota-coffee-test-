@@ -10,7 +10,6 @@ var config = {
       queue: "dummy"
     }
   },
-  // Decouples the build command to prevent the infinite recursion loop
   build: {
     buildCommand: "npm run build"
   },
