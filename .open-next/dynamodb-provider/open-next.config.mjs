@@ -1,6 +1,7 @@
-import type { OpenNextConfig } from "@opennextjs/cloudflare";
+import { createRequire as topLevelCreateRequire } from 'module';const require = topLevelCreateRequire(import.meta.url);import bannerUrl from 'url';const __dirname = bannerUrl.fileURLToPath(new URL('.', import.meta.url));
 
-const config: OpenNextConfig = {
+// open-next.config.ts
+var config = {
   default: {
     override: {
       wrapper: "cloudflare-node",
@@ -8,12 +9,12 @@ const config: OpenNextConfig = {
       proxyExternalRequest: "fetch",
       incrementalCache: "dummy",
       tagCache: "dummy",
-      queue: "dummy",
-    },
+      queue: "dummy"
+    }
   },
   // We specify the internal build command to prevent recursion
   build: {
-    buildCommand: "npm run build",
+    buildCommand: "npm run build"
   },
   // @ts-ignore
   edgeExternals: ["node:crypto"],
@@ -28,9 +29,11 @@ const config: OpenNextConfig = {
       // @ts-ignore
       tagCache: "dummy",
       // @ts-ignore
-      queue: "dummy",
-    },
-  },
+      queue: "dummy"
+    }
+  }
 };
-
-export default config;
+var open_next_config_default = config;
+export {
+  open_next_config_default as default
+};
