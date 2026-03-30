@@ -4,13 +4,16 @@ import * as schema from "./schema";
 
 /**
  * KIYOTA ARCHITECTURE: RESILIENT DB INITIALIZATION
- * Prevents build-time crashes by allowing the URL to be empty 
- * during Next.js static analysis.
+ * 
+ * PROBLEM: Neon driver throws an error if DATABASE_URL is empty during build-time static analysis.
+ * SOLUTION: We provide a 'Shadow String' (placeholder) for the compiler. 
+ * At runtime, Cloudflare's environment variable takes precedence.
  */
-const databaseUrl = process.env.DATABASE_URL || "";
 
-// Neon HTTP driver initialization
-const sql = neon(databaseUrl);
+const connectionString = process.env.DATABASE_URL || "postgres://shadow_user:shadow_pass@shadow_host/shadow_db";
 
-// Export the Drizzle instance
-export const db = drizzle(sql, { schema });
+// The Neon client is initialized with the shadow string during build, 
+// and the real string during production runtime.
+const client = neon(connectionString);
+
+export const db = drizzle(client, { schema });
