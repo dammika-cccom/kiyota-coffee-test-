@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css"; // The only place CSS is imported
 import { Providers } from "@/components/Providers";
 
-export const runtime = 'edge'; // <--- Add this line
+
 
 export const metadata: Metadata = {
   title: "Kiyota Coffee Roasters",
@@ -18,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           We use only 'antialiased' here to keep it neutral for Admin.
       */}
       <body className="antialiased">
+        {/* exchangeRate is now optional with a fallback inside Providers */}
         <Providers>
           {children}
         </Providers>

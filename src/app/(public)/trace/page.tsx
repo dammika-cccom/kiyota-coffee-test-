@@ -4,7 +4,7 @@ import {
   SearchIcon, AwardIcon, MapPinIcon, 
   TrendingUpIcon, CoffeeIcon, ShieldCheckIcon 
 } from "@/components/ui/icons";
-export const runtime = 'edge';
+
 
 export const dynamic = "force-dynamic";
 

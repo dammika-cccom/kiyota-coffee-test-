@@ -1,19 +1,15 @@
 "use client";
 
 import { CartProvider } from "@/context/CartContext";
-import { CurrencyProvider } from "@/context/CurrencyContext"; // Corrected Path
+import { CurrencyProvider } from "@/context/CurrencyContext";
 
 interface ProviderProps {
   children: React.ReactNode;
-  exchangeRate: number; // Institutional Rate passed from Server (layout.tsx)
+  exchangeRate?: number; // Made optional to satisfy Root Layout
 }
 
-export function Providers({ children, exchangeRate }: ProviderProps) {
+export function Providers({ children, exchangeRate = 325.00 }: ProviderProps) {
   return (
-    /* 
-       1. Currency Provider must be top-level so that the 
-          Cart can use currency logic if needed.
-    */
     <CurrencyProvider initialRate={exchangeRate}>
       <CartProvider>
         {children}

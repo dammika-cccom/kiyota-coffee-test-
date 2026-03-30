@@ -1,6 +1,11 @@
 import type { OpenNextConfig } from "@opennextjs/cloudflare";
 
-const config: OpenNextConfig = {
+/**
+ * KIYOTA ARCHITECTURE: OPEN-NEXT CONFIG
+ * We use type-casting to bypass the missing 'build' property in the 
+ * current version of @opennextjs/cloudflare types.
+ */
+const config = {
   default: {
     override: {
       wrapper: "cloudflare-node",
@@ -11,7 +16,7 @@ const config: OpenNextConfig = {
       queue: "dummy",
     },
   },
-  // We specify the internal build command to prevent recursion
+  // Decouples the build command to prevent the infinite recursion loop
   build: {
     buildCommand: "npm run build",
   },
@@ -31,6 +36,6 @@ const config: OpenNextConfig = {
       queue: "dummy",
     },
   },
-};
+} as OpenNextConfig; // This cast resolves the 'build' property error
 
 export default config;

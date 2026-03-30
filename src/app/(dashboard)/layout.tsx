@@ -12,7 +12,7 @@ import {
   TrendingUpIcon
 } from "@/components/ui/icons";
 
-export const runtime = 'edge';
+
 
 interface KiyotaSession {
   userId: string;

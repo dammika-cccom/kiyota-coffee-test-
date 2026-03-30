@@ -4,7 +4,7 @@ import { orders } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { md5 } from "@/lib/crypto-utils";
 
-export const runtime = 'edge';
+
 
 export async function POST(req: NextRequest) {
   try {

@@ -11,7 +11,6 @@ import {
   YoutubeIcon 
 } from "@/components/ui/icons";
 
-export const runtime = 'edge';
 
 export const metadata: Metadata = {
   title: "Kiyota Coffee | Premium Sri Lankan Specialty",
