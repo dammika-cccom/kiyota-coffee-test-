@@ -1,0 +1,10 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "kiyota-coffee"
+compatibility_date = "2024-11-18"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".open-next/.output"
+
+[vars]
+# Critical for Next.js 15 compilation
+NODE_VERSION = "22"
+NEXT_PRIVATE_LOCAL_SKIP_TYPECHECK = "1"
