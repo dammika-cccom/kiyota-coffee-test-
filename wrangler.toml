@@ -3,7 +3,7 @@ name = "kiyota-coffee"
 compatibility_date = "2024-11-18"
 compatibility_flags = ["nodejs_compat"]
 
-# Point to the folder where worker.js is actually created
+# Point to the folder where the renamed _worker.js now lives
 pages_build_output_dir = ".open-next"
 
 [vars]
