@@ -2,7 +2,14 @@ import { type JWTPayload } from "jose";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const secretKey = process.env.SESSION_SECRET || "kiyota_default_security_32_chars_long";
+const secretKey = process.env.SESSION_SECRET;
+
+// Architect's Note: Throwing an error during initialization is better 
+// than running with a vulnerable default secret.
+if (!secretKey) {
+  throw new Error("SESSION_SECRET environment variable is not defined. Security constraint violated.");
+}
+
 const key = new TextEncoder().encode(secretKey);
 
 interface SessionData extends JWTPayload {

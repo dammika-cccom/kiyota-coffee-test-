@@ -3,12 +3,10 @@ name = "kiyota-coffee"
 compatibility_date = "2024-11-18"
 compatibility_flags = ["nodejs_compat"]
 
-# IMPORTANT: OpenNext output path for Cloudflare Pages
-pages_build_output_dir = ".open-next/.output"
+# Point to the folder where worker.js is actually created
+pages_build_output_dir = ".open-next"
 
 [vars]
-# Explicitly set the runtime environment
 NODE_VERSION = "22"
 NEXT_PRIVATE_LOCAL_SKIP_TYPECHECK = "1"
-# Ensure the app knows it is running on the edge
 NEXTJS_ENV = "production"

@@ -4,17 +4,20 @@ import { decrypt } from "@/lib/session";
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
-  // 1. PUBLIC ASSETS & API BYPASS
+  // 1. AGGRESSIVE BYPASS: Ensure static assets never trigger middleware logic
+  // This is the primary cause of "White Pages" in Cloudflare Pages
   if (
+    path.includes(".") || // Bypasses all files with extensions (.css, .js, .png, etc)
     path.startsWith("/_next") || 
     path.startsWith("/api") || 
-    path.startsWith("/images") || 
     path === "/favicon.ico"
   ) {
     return NextResponse.next();
   }
 
   // 2. SESSION DECRYPTION
+  // Ensure your 'decrypt' function in lib/session.ts uses 'jose' or 'Web Crypto API'
+  // Node.js 'crypto' module will cause a 500 error here.
   const cookie = req.cookies.get("session")?.value;
   const session = cookie ? await decrypt(cookie) : null;
 
@@ -29,14 +32,12 @@ export default async function middleware(req: NextRequest) {
 
   // Case B: Authenticated user trying to access /login or /register
   if (isAuthRoute && session) {
-    // Redirect based on role to their specific landing page
     const isAdmin = session.role?.includes("ADMIN");
     const target = isAdmin ? "/admin/products" : "/profile/orders";
     return NextResponse.redirect(new URL(target, req.nextUrl));
   }
 
   // Case C: Role-Based Access Control (RBAC)
-  // If a BUYER tries to access any /admin path, send them to their dashboard
   if (path.startsWith("/admin") && session?.role === "BUYER") {
     return NextResponse.redirect(new URL("/profile/orders", req.nextUrl));
   }
@@ -44,6 +45,16 @@ export default async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
+// Optimization: Strict matcher reduces Worker invocation costs
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files (images, etc)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|images|.*\\.).*)',
+  ],
 };
