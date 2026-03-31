@@ -1,7 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "kiyota-coffee"
 compatibility_date = "2024-11-18"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat"] # THIS MUST BE PRESENT
 
 pages_build_output_dir = ".open-next"
 
