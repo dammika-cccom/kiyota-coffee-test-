@@ -49,9 +49,10 @@ export default async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * 1. Match all paths except /api/health
-     * 2. Exclude files with extensions (static assets)
-     * 3. Exclude internal Next.js paths
+     * Match all request paths except:
+     * 1. /api/health
+     * 2. /_next (Static chunks)
+     * 3. /images, /favicon.ico, etc.
      */
     '/((?!api/health|_next|favicon.ico|images|.*\\..*).*)',
   ],

@@ -1,8 +1,9 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "kiyota-coffee"
 compatibility_date = "2024-11-18"
-compatibility_flags = ["nodejs_compat"] # THIS MUST BE PRESENT
+compatibility_flags = ["nodejs_compat"]
 
+# Point to the directory containing both _worker.js AND the assets folder
 pages_build_output_dir = ".open-next"
 
 [vars]
