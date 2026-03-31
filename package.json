@@ -6,7 +6,7 @@
     "dev": "next dev",
     "clean": "npx rimraf .next .open-next",
     "build": "next build",
-    "build:cloudflare": "npm run clean && npx @opennextjs/cloudflare build && mv .open-next/worker.js .open-next/_worker.js && cp -rn .open-next/assets/. .open-next/",
+    "build:cloudflare": "npm run clean && npx @opennextjs/cloudflare build && mv .open-next/worker.js .open-next/_worker.js && cp -rn .open-next/assets/. .open-next/ && rm -rf .open-next/assets",
     "start": "next start",
     "lint": "next lint",
     "preview": "wrangler pages dev .open-next"
