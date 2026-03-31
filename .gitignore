@@ -19,10 +19,12 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
 *.pem
+*.log
 
 # debug
 npm-debug.log*
@@ -39,3 +41,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# OpenNext (Cloudflare specific)
+# This prevents your Windows-generated (broken) paths from going to the Cloud
+.open-next/
+
+# Wrangler (Local dev state)
+.wrangler/
