@@ -50,10 +50,11 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * 1. /api/health
-     * 2. /_next (Static chunks)
-     * 3. /images, /favicon.ico, etc.
+     * 1. _next/static (static files)
+     * 2. _next/image (image optimization)
+     * 3. favicon.ico, images, and any file with an extension (css, js, png, etc.)
+     * 4. api/health (diagnostic route)
      */
-    '/((?!api/health|_next|favicon.ico|images|.*\\..*).*)',
+    '/((?!_next/static|_next/image|api/health|favicon.ico|images|.*\\..*).*)',
   ],
 };

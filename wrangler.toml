@@ -3,7 +3,7 @@ name = "kiyota-coffee"
 compatibility_date = "2024-11-18"
 compatibility_flags = ["nodejs_compat"]
 
-# Point to the directory containing both _worker.js AND the assets folder
+# This folder now contains: _worker.js AND the _next folder
 pages_build_output_dir = ".open-next"
 
 [vars]
