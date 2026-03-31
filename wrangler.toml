@@ -3,10 +3,12 @@ name = "kiyota-coffee"
 compatibility_date = "2024-11-18"
 compatibility_flags = ["nodejs_compat"]
 
-# Point to the folder where the renamed _worker.js now lives
+# This tells Cloudflare where to find the _worker.js we renamed
 pages_build_output_dir = ".open-next"
 
 [vars]
+# NODE_VERSION is often handled by the build environment, 
+# but keeping it here is usually safe. 
+# REMOVED: NEXTJS_ENV and NEXT_PRIVATE_LOCAL_SKIP_TYPECHECK 
+# (We will set these in the Dashboard instead)
 NODE_VERSION = "22"
-NEXT_PRIVATE_LOCAL_SKIP_TYPECHECK = "1"
-NEXTJS_ENV = "production"
